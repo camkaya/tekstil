@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANASAYFA</title>
+    <link rel="stylesheet" href="nav.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script><!-- Stil dosyasının doğru yolu verilmelidir -->
+</head>
+<%- include('navbar.ejs') %>
+
+<div style="width: 80%; margin: auto;">
+    <canvas id="myChart"></canvas>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/sube_sayisi')
+            .then(response => response.json())
+            .then(veri => {
+                const ilceler = veri.map(item => item.ilce_ad);
+                const subeSayilari = veri.map(item => item.sayi);
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ilceler,
+                        datasets: [{
+                            label: 'Şube Sayısı',
+                            data: subeSayilari,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+    });
+</script>
+<body>
+</body>
+</html>

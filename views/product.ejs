@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANASAYFA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="nav.css"> <!-- Stil dosyasının doğru yolu verilmelidir -->
+</head>
+<%- include('navbar.ejs') %>
+<form action="/urun_aciklama" method="POST"> <!-- Form, /login route'una POST metoduyla veri gönderecek -->
+    <input type="text" name="deger" placeholder="tutar giriniz" required> <!-- İstenilen genişlik -->
+  </form>
+<div class="table-container">
+    <table>
+        <tr>
+            <th>Ürün Adı</th>
+            <th>Ürün Fiyatı</th>
+            <th>sezon</th>
+            <th>Satılan Adet</th>
+            <th>Toplam Satış</th>
+            <th>Durum</th>
+            <th>Önerilen Satış Tutarı</th>
+
+            <!-- Diğer başlıklar buraya eklenir -->
+        </tr>
+        <% products.forEach(function(product){ %>
+            <tr>
+                <td><%= product.urun_ad %></td>
+                <td><%= product.urun_fiyat %></td>
+                <td><%= product.sezon_ad %></td>
+                <td><%= product.toplam %></td>
+                <td><%= product.toplam_gelir %></td>
+                <td><%= product.aciklama %></td>
+                <td><%= product.onerilen %></td>
+                <!-- Diğer alanlar buraya eklenir -->
+            </tr>
+        <% }); %>
+    </table>
+</div>
+
+<body>
+</body>
+</html>

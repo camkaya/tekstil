@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANASAYFA</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="nav.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .charts {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            width: 48%;
+        }
+
+        .tables {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .table-container {
+            width: 48%;
+            margin: auto; /* Bu satır tabloyu dikey olarak ortalar */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<%- include('navbar.ejs') %>
+<div class="container">
+    <div class="charts">
+        <div class="chart-container">
+            <canvas id="myChart1"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="myChart2"></canvas>
+        </div>
+    </div>
+
+    <div class="tables">
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Mağaza ID</th>
+                    <th>Mağaza ADI</th>
+                    <th>TOPLAM SATIŞ</th>
+                    <th>Şube İlçe</th>
+                </tr>
+                <% stores.forEach(function(store){ %>
+                    <tr>
+                        <td><%= store.magaza_id %></td>
+                        <td><%= store.magaza_ad %></td>
+                        <td><%= store.toplam %></td>
+                        <td><%= store.ilce_ad %></td>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/store_chart1')
+            .then(response => response.json())
+            .then(data => {
+                const ilceler = data.map(item => item.magaza_ad);
+                const subeSayilari = data.map(item => item.toplam);
+
+                const ctx = document.getElementById('myChart1').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ilceler,
+                        datasets: [{
+                            label: 'Toplam Satış',
+                            data: subeSayilari,
+                            backgroundColor: '#F23005',
+                            borderColor: '#F23005',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+
+        fetch('/store_chart2')
+            .then(response => response.json())
+            .then(data => {
+                const ilceler = data.map(item => item.ilce_ad);
+                const subeSayilari = data.map(item => item.sayi);
+
+                const ctx = document.getElementById('myChart2').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ilceler,
+                        datasets: [{
+                            data: subeSayilari,
+                            backgroundColor: ['#F24405', '#F27B50', '#F2AD94', '#260A17', '#F23005', '#400D2E'],
+                            borderColor: '#fff',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        legend: {
+                            position: 'right',
+                        },
+                        plugins: {
+                            labels: {
+                                render: 'percentage', // veya 'value'
+                                fontColor: '#fff',
+                                fontSize: 12,
+                                precision: 2,
+                                showZero: true,
+                                textShadow: true,
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+    });
+</script>
+
+<body>
+</body>
+</html>
